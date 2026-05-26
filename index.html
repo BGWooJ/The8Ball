@@ -104,14 +104,14 @@
             filter: blur(15px);
         }
 
-        /* Triangle Window */
+        /* Triangle Window - EXPANDED FOR MAXIMUM VISIBILITY */
         .window {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) translateZ(10px);
-            width: 230px; 
-            height: 230px; 
+            width: 280px; /* Increased to maximize space inside the 400px ball */
+            height: 280px; 
             background: radial-gradient(circle, #1a1a3e, #0a0a1e);
             clip-path: polygon(50% 15%, 90% 85%, 10% 85%);
             overflow: hidden;
@@ -130,23 +130,22 @@
             justify-content: center;
         }
 
-        /* Response Text (floating die) */
+        /* Response Text - RECONFIGURED FOR WRAPPING SAFETY */
         .response-text {
             position: absolute;
-            width: 85%;
+            width: 75%; /* Narrowed container boundaries to keep text away from sharp triangle edges */
             text-align: center;
             color: #64ffda;
-            font-size: 14px; 
+            font-size: 12px; /* Balanced size ensures long lines fit comfortably */
             font-weight: 600;
             text-shadow: 0 0 10px rgba(100, 255, 218, 0.8);
-            padding: 10px 20px 25px 20px; 
-            line-height: 1.35;
-            opacity: 1; /* Keep default baseline visibility clean */
+            padding: 35px 5px 10px 5px; /* Nudges alignment directly into center viewport */
+            line-height: 1.4;
+            opacity: 1; 
             transform: translateY(0) scale(1);
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
-        /* Managed purely via keyframes now to prevent element drops */
         .response-text.animate-float {
             animation: floatUp 2.0s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
@@ -231,7 +230,7 @@
             border-width: 0;
         }
 
-        /* Responsive Configurations */
+        /* Responsive Configuration */
         @media (max-width: 768px) {
             .ball-container {
                 width: 300px;
@@ -240,13 +239,13 @@
             }
 
             .window {
-                width: 170px; 
-                height: 170px; 
+                width: 200px; 
+                height: 200px; 
             }
 
             .response-text {
-                font-size: 11px; 
-                padding: 5px 10px 15px 10px;
+                font-size: 10px; 
+                padding: 25px 5px 5px 5px;
             }
 
             .shake-button {
@@ -280,7 +279,6 @@
     <div class="sr-only" aria-live="assertive" id="srAnnounce"></div>
 
     <script>
-        // Execution safety container
         document.addEventListener("DOMContentLoaded", () => {
             
             const responses = [
@@ -419,43 +417,32 @@
             let swayTimeout;
 
             function generateResponse() {
-                // Safety Lock
                 shakeButton.disabled = true;
                 buttonText.textContent = "Thinking...";
 
-                // Clear ongoing animation classes/timeouts completely
                 clearTimeout(swayTimeout);
                 responseText.classList.remove('animate-float', 'sway');
-                
-                // Instantly hide current text during the fade/shake sequence
                 responseText.style.opacity = '0';
 
-                // Fire shake
                 ballContainer.classList.add('shaking');
 
-                // Executed exactly at the completion of the 500ms CSS shake
                 setTimeout(() => {
                     ballContainer.classList.remove('shaking');
 
-                    // Randomize outcome securely
                     const randomIndex = Math.floor(Math.random() * responses.length);
                     const chosenResponse = responses[randomIndex];
 
-                    // Process display updates
                     responseText.textContent = chosenResponse;
                     if (srAnnounce) srAnnounce.textContent = "Response revealed: " + chosenResponse;
 
-                    // Trigger clean presentation keyframes
                     responseText.classList.add('animate-float');
 
-                    // Cascade into gentle passive float loop smoothly after keyframe completion
                     swayTimeout = setTimeout(() => {
                         responseText.classList.remove('animate-float');
                         responseText.classList.add('sway');
                         responseText.style.opacity = '1';
                     }, 2000);
 
-                    // Unlock control elements
                     shakeButton.disabled = false;
                     buttonText.textContent = "Shake";
 
